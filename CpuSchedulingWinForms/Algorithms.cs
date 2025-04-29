@@ -9,6 +9,7 @@ namespace CpuSchedulingWinForms
 {
     public static class Algorithms
     {
+        // First Come First Serve Algorithm
         public static void fcfsAlgorithm(string userInput)
         {
             int np = Convert.ToInt16(userInput);
@@ -67,7 +68,7 @@ namespace CpuSchedulingWinForms
                 //frm.ShowDialog();
             }
         }
-
+        //Shortest Job First Algorithm
         public static void sjfAlgorithm(string userInput)
         {
             int np = Convert.ToInt16(userInput);
@@ -150,7 +151,7 @@ namespace CpuSchedulingWinForms
                 MessageBox.Show("Average waiting time for " + np + " processes" + " = " + (awt = twt / np) + " sec(s)", "Average waiting time", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
+        //Priority Scheduling Algorithm
         public static void priorityAlgorithm(string userInput)
         {
             int np = Convert.ToInt16(userInput);
@@ -252,7 +253,7 @@ namespace CpuSchedulingWinForms
                 //this.Hide();
             }
         }
-
+        //Round Robin Algorithm
         public static void roundRobinAlgorithm(string userInput)
         {
             int np = Convert.ToInt16(userInput);
@@ -339,6 +340,223 @@ namespace CpuSchedulingWinForms
                 MessageBox.Show("Average wait time for " + np + " processes: " + averageWaitTime + " sec(s)", "", MessageBoxButtons.OK);
                 MessageBox.Show("Average turnaround time for " + np + " processes: " + averageTurnaroundTime + " sec(s)", "", MessageBoxButtons.OK);
             }
+        }
+        //Multi-Level Feedback Queue (MLFQ) Scheduling.
+        public static void mlfqAlgorithm(string userInput)
+        {
+            int np = Convert.ToInt16(userInput);
+            int[] arrivalTime = new int[np];
+            int[] burstTime = new int[np];
+            int[] remainingTime = new int[np];
+            int[] completionTime = new int[np];
+
+            // Prompt for arrival and burst times.
+            for (int i = 0; i < np; i++)
+            {
+                string inputArrival = Microsoft.VisualBasic.Interaction.InputBox("Enter Arrival time for P" + (i + 1),
+                                                        "MLFQ Scheduling", "", -1, -1);
+                arrivalTime[i] = Convert.ToInt32(inputArrival);
+
+                string inputBurst = Microsoft.VisualBasic.Interaction.InputBox("Enter Burst time for P" + (i + 1),
+                                                        "MLFQ Scheduling", "", -1, -1);
+                burstTime[i] = Convert.ToInt32(inputBurst);
+
+                remainingTime[i] = burstTime[i];
+            }
+
+            // Prompt for time quantums for level 0 and level 1.
+            string q0Input = Microsoft.VisualBasic.Interaction.InputBox("Enter Time Quantum for Level 0",
+                                                    "MLFQ Scheduling", "4", -1, -1);
+            int quantum0 = Convert.ToInt32(q0Input);
+            string q1Input = Microsoft.VisualBasic.Interaction.InputBox("Enter Time Quantum for Level 1",
+                                                    "MLFQ Scheduling", "6", -1, -1);
+            int quantum1 = Convert.ToInt32(q1Input);
+
+            // Two queues representing the two levels.
+            Queue<int> queue0 = new Queue<int>();
+            Queue<int> queue1 = new Queue<int>();
+
+            // Boolean array to track whether a process has been added to any queue.
+            bool[] added = new bool[np];
+
+            int t = 0;
+            int completed = 0;
+
+            // Simulation loop until all processes finish.
+            while (completed < np)
+            {
+                // Add any processes that have arrived and not yet enqueued.
+                for (int i = 0; i < np; i++)
+                {
+                    if (arrivalTime[i] <= t && !added[i])
+                    {
+                        queue0.Enqueue(i);
+                        added[i] = true;
+                    }
+                }
+
+                if (queue0.Count > 0)
+                {
+                    int idx = queue0.Dequeue();
+                    int execTime = Math.Min(quantum0, remainingTime[idx]);
+                    // Execute the process for its allotted time slice.
+                    for (int j = 0; j < execTime; j++)
+                    {
+                        t++;
+                        remainingTime[idx]--;
+
+                        // Check for any new arrivals during execution.
+                        for (int i = 0; i < np; i++)
+                        {
+                            if (arrivalTime[i] <= t && !added[i])
+                            {
+                                queue0.Enqueue(i);
+                                added[i] = true;
+                            }
+                        }
+                        if (remainingTime[idx] == 0)
+                            break;
+                    }
+                    if (remainingTime[idx] == 0)
+                    {
+                        completionTime[idx] = t;
+                        completed++;
+                    }
+                    else
+                    {
+                        // Process did not finish; demote to level 1.
+                        queue1.Enqueue(idx);
+                    }
+                }
+                else if (queue1.Count > 0)
+                {
+                    int idx = queue1.Dequeue();
+                    int execTime = Math.Min(quantum1, remainingTime[idx]);
+                    // Execute from level 1.
+                    for (int j = 0; j < execTime; j++)
+                    {
+                        t++;
+                        remainingTime[idx]--;
+
+                        // New arrivals always go to level 0.
+                        for (int i = 0; i < np; i++)
+                        {
+                            if (arrivalTime[i] <= t && !added[i])
+                            {
+                                queue0.Enqueue(i);
+                                added[i] = true;
+                            }
+                        }
+                        if (remainingTime[idx] == 0)
+                            break;
+                    }
+                    if (remainingTime[idx] == 0)
+                    {
+                        completionTime[idx] = t;
+                        completed++;
+                    }
+                    else
+                    {
+                        // Re-enqueue in level 1 if still not done.
+                        queue1.Enqueue(idx);
+                    }
+                }
+                else
+                {
+                    // If no process is available, idle the CPU.
+                    t++;
+                }
+            }
+
+            double totalWaiting = 0;
+            int[] waitingTime = new int[np];
+
+            // Calculate waiting time = turnaround time – burst time.
+            for (int i = 0; i < np; i++)
+            {
+                int turnaroundTime = completionTime[i] - arrivalTime[i];
+                waitingTime[i] = turnaroundTime - burstTime[i];
+                totalWaiting += waitingTime[i];
+                MessageBox.Show("Waiting time for P" + (i + 1) + " = " + waitingTime[i],
+                                "MLFQ Waiting Time", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            double averageWaiting = totalWaiting / np;
+            MessageBox.Show("Average Waiting Time for " + np + " processes = " + averageWaiting,
+                            "MLFQ Average Waiting Time", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        //Shortest Remaining Time First (SRTF)
+        public static void srtfAlgorithm(string userInput)
+        {
+            int np = Convert.ToInt16(userInput);
+            int[] arrivalTime = new int[np];
+            int[] burstTime = new int[np];
+            int[] remainingTime = new int[np];
+            int[] completionTime = new int[np];
+            int[] waitingTime = new int[np];
+
+            // Get arrival and burst times for each process.
+            for (int i = 0; i < np; i++)
+            {
+                string inputArrival = Microsoft.VisualBasic.Interaction.InputBox("Enter Arrival time for P" + (i + 1),
+                                                        "SRTF Scheduling", "", -1, -1);
+                arrivalTime[i] = Convert.ToInt32(inputArrival);
+
+                string inputBurst = Microsoft.VisualBasic.Interaction.InputBox("Enter Burst time for P" + (i + 1),
+                                                        "SRTF Scheduling", "", -1, -1);
+                burstTime[i] = Convert.ToInt32(inputBurst);
+
+                remainingTime[i] = burstTime[i];
+            }
+
+            int t = 0; // current time
+            int completed = 0;
+
+            // Simulate until all processes complete.
+            while (completed < np)
+            {
+                int idx = -1;
+                int minRem = int.MaxValue;
+                for (int i = 0; i < np; i++)
+                {
+                    if (arrivalTime[i] <= t && remainingTime[i] > 0 && remainingTime[i] < minRem)
+                    {
+                        minRem = remainingTime[i];
+                        idx = i;
+                    }
+                }
+
+                if (idx == -1)
+                {
+                    // CPU is idle if no process has arrived.
+                    t++;
+                }
+                else
+                {
+                    // Execute the process for one time unit.
+                    remainingTime[idx]--;
+                    t++;
+
+                    if (remainingTime[idx] == 0)
+                    {
+                        completionTime[idx] = t;
+                        completed++;
+                    }
+                }
+            }
+
+            double totalWaiting = 0;
+
+            // Calculate waiting time: waiting = completion time – arrival time – burst time.
+            for (int i = 0; i < np; i++)
+            {
+                waitingTime[i] = completionTime[i] - arrivalTime[i] - burstTime[i];
+                totalWaiting += waitingTime[i];
+                MessageBox.Show("Waiting time for P" + (i + 1) + " = " + waitingTime[i],
+                                "SRTF Waiting Time", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            double averageWaiting = totalWaiting / np;
+            MessageBox.Show("Average Waiting Time for " + np + " processes = " + averageWaiting,
+                            "SRTF Average Waiting Time", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

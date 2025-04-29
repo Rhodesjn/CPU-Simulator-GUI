@@ -54,6 +54,8 @@
             this.btnPriority = new System.Windows.Forms.Button();
             this.btnSJF = new System.Windows.Forms.Button();
             this.btnFCFS = new System.Windows.Forms.Button();
+            this.btnMultiLevel = new System.Windows.Forms.Button();
+            this.btnShortestRemaining = new System.Windows.Forms.Button();
             this.txtProcess = new System.Windows.Forms.TextBox();
             this.labelProcess = new System.Windows.Forms.Label();
             this.productTab = new System.Windows.Forms.TabPage();
@@ -120,7 +122,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(3, 382);
+            this.label1.Location = new System.Drawing.Point(-3, 386);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(125, 52);
             this.label1.TabIndex = 3;
@@ -318,6 +320,8 @@
             this.cpuSchedulerTab.Controls.Add(this.btnPriority);
             this.cpuSchedulerTab.Controls.Add(this.btnSJF);
             this.cpuSchedulerTab.Controls.Add(this.btnFCFS);
+            this.cpuSchedulerTab.Controls.Add(this.btnMultiLevel);
+            this.cpuSchedulerTab.Controls.Add(this.btnShortestRemaining);
             this.cpuSchedulerTab.Controls.Add(this.txtProcess);
             this.cpuSchedulerTab.Controls.Add(this.labelProcess);
             this.cpuSchedulerTab.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -405,8 +409,6 @@
             this.btnFCFS.FlatAppearance.MouseOverBackColor = System.Drawing.Color.PaleGreen;
             this.btnFCFS.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnFCFS.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnFCFS.Image = ((System.Drawing.Image)(resources.GetObject("btnFCFS.Image")));
-            this.btnFCFS.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnFCFS.Location = new System.Drawing.Point(16, 278);
             this.btnFCFS.Name = "btnFCFS";
             this.btnFCFS.Size = new System.Drawing.Size(84, 45);
@@ -416,6 +418,42 @@
             this.btnFCFS.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnFCFS.UseVisualStyleBackColor = false;
             this.btnFCFS.Click += new System.EventHandler(this.btnFCFS_Click);
+            // 
+            // btnMultiLevel
+            // 
+            this.btnMultiLevel.BackColor = System.Drawing.Color.Beige;
+            this.btnMultiLevel.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnMultiLevel.FlatAppearance.MouseOverBackColor = System.Drawing.Color.PaleGreen;
+            this.btnMultiLevel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnMultiLevel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMultiLevel.Image = ((System.Drawing.Image)(resources.GetObject("btnMultiLevel.Image")));
+            this.btnMultiLevel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnMultiLevel.Location = new System.Drawing.Point(93, 348);
+            this.btnMultiLevel.Name = "btnMultiLevel";
+            this.btnMultiLevel.Size = new System.Drawing.Size(84, 45);
+            this.btnMultiLevel.TabIndex = 8;
+            this.btnMultiLevel.Text = "MLFQ";
+            this.btnMultiLevel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnMultiLevel.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnMultiLevel.UseVisualStyleBackColor = false;
+            this.btnMultiLevel.Click += new System.EventHandler(this.btnMultiLevel_Click);
+            // 
+            // btnShortestRemaining
+            // 
+            this.btnShortestRemaining.BackColor = System.Drawing.Color.Beige;
+            this.btnShortestRemaining.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnShortestRemaining.FlatAppearance.MouseOverBackColor = System.Drawing.Color.PaleGreen;
+            this.btnShortestRemaining.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnShortestRemaining.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnShortestRemaining.Location = new System.Drawing.Point(217, 348);
+            this.btnShortestRemaining.Name = "btnShortestRemaining";
+            this.btnShortestRemaining.Size = new System.Drawing.Size(84, 45);
+            this.btnShortestRemaining.TabIndex = 8;
+            this.btnShortestRemaining.Text = "SRTF";
+            this.btnShortestRemaining.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnShortestRemaining.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnShortestRemaining.UseVisualStyleBackColor = false;
+            this.btnShortestRemaining.Click += new System.EventHandler(this.btnShortestRemaining_Click);
             // 
             // txtProcess
             // 
@@ -569,6 +607,8 @@
         private System.Windows.Forms.Button btnPriority;
         private System.Windows.Forms.Button btnSJF;
         private System.Windows.Forms.Button btnFCFS;
+        private System.Windows.Forms.Button btnMultiLevel;
+        private System.Windows.Forms.Button btnShortestRemaining;
         public System.Windows.Forms.TextBox txtProcess;
         private System.Windows.Forms.Label labelProcess;
         private System.Windows.Forms.Button btnQrcode;
